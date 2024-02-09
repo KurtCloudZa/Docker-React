@@ -5,6 +5,9 @@ pipeline {
         DOCKER_IMAGE = 'docker-react-snap'
         CONTAINER_NAME = 'react-app-container'
         PORT = '8082'
+        SSH_PORT = '22'
+        SSH_USER = 'root' // Change this to your SSH username
+        DOCKER_HOST = 'localhost' // Change this to your Docker host IP or hostname
     }
 
     stages {
@@ -22,7 +25,10 @@ pipeline {
                 }
                 // Run Docker container
                 script {
-                    docker.image(env.DOCKER_IMAGE).run("-p ${env.PORT}:${env.PORT} --name ${env.CONTAINER_NAME} -d")
+                    def dockerCmd = "docker run -d -p ${env.PORT}:${env.PORT} -p ${env.SSH_PORT}:22 --name ${env.CONTAINER_NAME} ${env.DOCKER_IMAGE}"
+                    dockerCmd.execute().text
+                    // Print SSH details
+                    echo "To SSH into the container, use: ssh -p ${env.SSH_PORT} ${env.SSH_USER}@${env.DOCKER_HOST}"
                 }
             }
         }
