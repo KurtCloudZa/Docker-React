@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Check out the code from your Git repository
-                git 'https://github.com/your/repo.git'
+                git 'https://github.com/KurtCloudZa/Docker-React.git'
                 echo 'Checkout Stage'
             }
         }
@@ -33,8 +33,8 @@ pipeline {
             steps {
                 // Build and run your Docker container
                 script {
-                    docker.build('your-docker-image-name:latest', '.')
-                    docker.image('your-docker-image-name:latest').run('-p 8081:80')
+                    docker.build('kurtcloudza/docker-react-snap:latest', '.')
+                    docker.image('kurtcloudza/docker-react-snap:latest').run('-p 8081:80')
                     echo 'Deploy Stage'
                 }
             }
