@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 # Use a new stage for the final image
-FROM nginx:1.19.0
+FROM nginx:alpine
 
 # Set working directory
 WORKDIR /usr/share/nginx/html
