@@ -18,11 +18,11 @@ pipeline {
             steps {
                 // Build Docker image
                 script {
-                    docker.build(env.DOCKER_IMAGE)
+                    sudo docker.build(env.DOCKER_IMAGE)
                 }
                 // Run Docker container
                 script {
-                    docker.image(env.DOCKER_IMAGE).run('--name ${env.CONTAINER_NAME} -p ${env.PORT}:${env.PORT} -d')
+                    sudo docker.image(env.DOCKER_IMAGE).run('--name ${env.CONTAINER_NAME} -p ${env.PORT}:${env.PORT} -d')
                 }
             }
         }
@@ -30,8 +30,8 @@ pipeline {
             steps {
                 // Clean up Docker containers
                 script {
-                    docker.container(env.CONTAINER_NAME).stop()
-                    docker.container(env.CONTAINER_NAME).remove(force: true)
+                    sudo docker.container(env.CONTAINER_NAME).stop()
+                    sudo docker.container(env.CONTAINER_NAME).remove(force: true)
                 }
             }
         }
