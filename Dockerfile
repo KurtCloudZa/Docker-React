@@ -30,10 +30,10 @@ RUN apk update && apk add --no-cache openssh \
     && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
     && echo 'root:15963' | chpasswd \
     && rm -rf /var/cache/apk/* \
-    && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' \
-    && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' \
-    && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' \
-    && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
+    && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key1 -N '' \
+    && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key1 -N '' \
+    && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key1 -N '' \
+    && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key1 -N ''
 
 # Expose port 22 for SSH
 EXPOSE 22
