@@ -1,42 +1,37 @@
 pipeline {
     agent any
 
-    tools { nodejs "node" }
+    environment {
+        DOCKER_IMAGE = 'docker-react-snap'
+        CONTAINER_NAME = 'react-app-container'
+        PORT = '8082'
+    }
 
-    stages{
-        stage{
-            steps{
-                git 'https://github.com/KurtCloudZa/Docker-React.git'
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the Git repository
+                git branch: 'main', url: 'https://github.com/KurtCloudZa/Docker-React.git'
             }
         }
-
-        stage('Build') {
+        stage('Build and Run Docker Container') {
             steps {
-                sh 'npm install'
-            }
-        }
-
-        stage("Tests"){
-            steps{
-                sh 'npm test'
-            }
-       }
-        
-        stage('Deploy') {
-            steps {
-                // Build and run your Docker container
+                // Build Docker image
                 script {
-                    docker.build('kurtcloudza/docker-react-snap:latest', '.')
-                    docker.image('kurtcloudza/docker-react-snap:latest').run('-p 8081:80')
+                    docker.build(env.DOCKER_IMAGE)
+                }
+                // Run Docker container
+                script {
+                    docker.image(env.DOCKER_IMAGE).run('--name ${env.CONTAINER_NAME} -p ${env.PORT}:${env.PORT} -d')
                 }
             }
         }
-
-        stage('Echo Docker Host IP') {
+        stage('Cleanup') {
             steps {
+                // Clean up Docker containers
                 script {
-                    // Run a shell command to get the Docker host IP address
-                    sh "echo Docker host IP address: \$(hostname -I | awk '{print \$1}')"
+                    docker.container(env.CONTAINER_NAME).stop()
+                    docker.container(env.CONTAINER_NAME).remove(force: true)
                 }
             }
         }
