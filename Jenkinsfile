@@ -4,6 +4,12 @@ pipeline {
     tools { nodejs "node" }
 
     stages{
+        stage{
+            steps{
+                git 'https://github.com/KurtCloudZa/Docker-React.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'npm install'
