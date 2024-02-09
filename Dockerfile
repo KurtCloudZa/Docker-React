@@ -12,6 +12,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
+# Generate SSH keys
+RUN apk update && \
+    apk add --no-cache openssh && \
+    ssh-keygen -A && \
+    mv /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ed25519_key /app/ssh-keys/
+
 # Use a new stage for the final image
 FROM nginx:1.19.0-alpine
 
@@ -24,16 +30,12 @@ RUN rm -rf ./*
 # Copy built files from the builder stage
 COPY --from=builder /app/build .
 
-# Overwrite existing SSH keys
-COPY --from=builder /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key
-COPY --from=builder /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_dsa_key
-COPY --from=builder /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key
-COPY --from=builder /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key
+# Copy SSH keys from the builder stage
+COPY --from=builder /app/ssh-keys/* /etc/ssh/
 
 # Install necessary packages
 RUN apk update && \
     apk add --no-cache openssh && \
-    ssh-keygen -A && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     echo 'root:15963' | chpasswd && \
     rm -rf /var/cache/apk/*
