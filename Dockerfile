@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 # Use a new stage for the final image
-FROM nginx:alpine
+FROM nginx:1.19.0-alpine
 
 # Set working directory
 WORKDIR /usr/share/nginx/html
@@ -25,15 +25,16 @@ RUN rm -rf ./*
 COPY --from=builder /app/build .
 
 # Install necessary packages
-RUN apk update && apk add --no-cache openssh \
-    && ssh-keygen -A \
-    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
-    && echo 'root:15963' | chpasswd \
-    && rm -rf /var/cache/apk/* \
-    && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key1 -N '' \
-    && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key1 -N '' \
-    && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key1 -N '' \
-    && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key1 -N ''
+RUN apk update && \
+    apk add --no-cache openssh && \
+    ssh-keygen -A && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    echo 'root:15963' | chpasswd && \
+    rm -rf /var/cache/apk/* && \
+    ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
+    ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' && \
+    ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
+    ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 
 # Expose port 22 for SSH
 EXPOSE 22
