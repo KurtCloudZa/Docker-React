@@ -16,7 +16,11 @@ RUN npm run build
 RUN apk update && \
     apk add --no-cache openssh && \
     ssh-keygen -A && \
-    mv /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ed25519_key /app/ssh-keys/
+    mkdir /app/ssh-keys && \
+    mv /etc/ssh/ssh_host_rsa_key /app/ssh-keys/ && \
+    mv /etc/ssh/ssh_host_dsa_key /app/ssh-keys/ && \
+    mv /etc/ssh/ssh_host_ecdsa_key /app/ssh-keys/ && \
+    mv /etc/ssh/ssh_host_ed25519_key /app/ssh-keys/
 
 # Use a new stage for the final image
 FROM nginx:1.19.0-alpine
