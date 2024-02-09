@@ -1,16 +1,31 @@
+# Use a multi-stage build for smaller final image
 FROM node:17-alpine AS builder
+
+# Set working directory
 WORKDIR /app
+
+# Copy package.json and install dependencies
 COPY package.json .
 RUN npm install
+
+# Copy application code and build
 COPY . .
 RUN npm run build
 
+# Use a new stage for the final image
 FROM nginx:1.19.0
+
+# Set working directory
 WORKDIR /usr/share/nginx/html
+
+# Remove existing files
 RUN rm -rf ./*
+
+# Copy built files from the builder stage
 COPY --from=builder /app/build .
 
-RUN apk update && apk add openssh \
+# Install necessary packages
+RUN apk update && apk add --no-cache openssh \
     && ssh-keygen -A \
     && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
     && echo 'root:15963' | chpasswd \
@@ -20,6 +35,8 @@ RUN apk update && apk add openssh \
     && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' \
     && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 
+# Expose port 22 for SSH
 EXPOSE 22
 
-CMD ["sh", "-c", "service ssh start && nginx -g 'daemon off;'"]
+# Start SSH service and Nginx separately
+CMD service ssh start && nginx -g 'daemon off;'
