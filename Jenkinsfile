@@ -20,7 +20,14 @@ pipeline {
                 echo 'Build Stage'
             }
         }
-        
+
+       stage("Tests"){
+            steps{
+                sh 'npm test'
+                echo 'Test App'
+            }
+       }
+
         stage('Echo Docker Host IP') {
             steps {
                 script {
