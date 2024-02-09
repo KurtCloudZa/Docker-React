@@ -22,7 +22,11 @@ pipeline {
                 }
                 // Run Docker container
                 script {
-                    docker.image(env.DOCKER_IMAGE).run("-p ${env.PORT}:${env.PORT} --name ${env.CONTAINER_NAME} -d")
+                    docker.image(env.DOCKER_IMAGE).run([
+                        "-p", "${env.PORT}:${env.PORT}",
+                        "--name", "${env.CONTAINER_NAME}",
+                        "-d"
+                    ])
                 }
             }
         }
