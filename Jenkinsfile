@@ -1,18 +1,11 @@
 pipeline {
-    agent {
-        docker {
-            // Use the Docker image with the tools needed for your build
-            image 'node:17-alpine'
-            // Mount the Docker socket so Docker commands can be executed within the container
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
     
     stages {
         stage('Checkout') {
             steps {
                 // Check out the code from your Git repository
-                git 'https://github.com/KurtCloudZa/Docker-React.git'
+                git 'https://github.com/your/repo.git'
             }
         }
         
@@ -24,12 +17,21 @@ pipeline {
             }
         }
         
+        stage('Echo Docker Host IP') {
+            steps {
+                script {
+                    // Run a shell command to get the Docker host IP address
+                    sh "echo Docker host IP address: \$(hostname -I | awk '{print \$1}')"
+                }
+            }
+        }
+        
         stage('Deploy') {
             steps {
                 // Build and run your Docker container
                 script {
-                    docker.build('kurtcloudza/docker-react-snap:latest', '.')
-                    docker.image('kurtcloudza/docker-react-snap:latest').run('-p 8081:80')
+                    docker.build('your-docker-image-name:latest', '.')
+                    docker.image('your-docker-image-name:latest').run('-p 8081:80')
                 }
             }
         }
