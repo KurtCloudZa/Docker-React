@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = 'docker-react-snap'
         CONTAINER_NAME = 'react-app-container'
         PORT = '8082'
-        SSH_PORT = '22'
+        SSH_PORT = '2222'
         SSH_USER = 'root' // Change this to your SSH username
         DOCKER_HOST = 'localhost' // Change this to your Docker host IP or hostname
     }
